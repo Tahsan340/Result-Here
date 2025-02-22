@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Student Leaderboard</title>
+    <script defer src="script.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1f1f1f;
+            color: #fff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #282828;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #00bcd4;
+        }
+
+        .leaderboard {
+            margin-top: 30px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #444;
+            text-align: center;
+            font-size: 16px;
+            color: #fff;
+        }
+
+        th {
+            background-color: #007bff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        th:hover {
+            background-color: #0056b3;
+        }
+
+        tr:nth-child(odd) { background-color: #1f1f1f; }
+        tr:nth-child(even) { background-color: #252525; }
+
+        .leaderboard-row:hover {
+            transform: scale(1.05);
+            background-color: rgba(0, 188, 212, 0.3);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+        }
+
+        #searchBox {
+            padding: 8px;
+            margin: 10px;
+            border-radius: 10px;
+            border: 1px solid #00bcd4;
+            background-color: #1c1c1c;
+            color: #fff;
+        }
+
+        button {
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .analytics {
+            margin-top: 30px;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .analytics p {
+            font-size: 18px;
+            margin: 10px 0;
+            color: #00bcd4;
+        }
+
+        .bar-container {
+            margin: 20px 0;
+            height: 10px;
+            background: #444;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            background: #00bcd4;
+            width: 0;
+            transition: width 1s ease-in-out;
+        }
+
+        .trophy {
+            font-size: 24px;
+        }
+
+        .analytics-box {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .analytics-box div {
+            width: 48%;
+        }
+
+        .bar-container {
+            height: 15px;
+        }
+
+        /* Media Queries for Mobile */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+            table {
+                font-size: 14px;
+            }
+            th, td {
+                padding: 8px;
+            }
+            .analytics-box {
+                flex-direction: column;
+            }
+            .analytics-box div {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Student Leaderboard</h1>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder="Search by name..." />
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="leaderboard">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Roll</th>
+                        <th>Bangla 1st</th>
+                        <th>Bangla 2nd</th>
+                        <th>English 1st</th>
+                        <th>English 2nd</th>
+                        <th>BGS</th>
+                        <th>General Math</th>
+                        <th>Physics</th>
+                        <th>Chemistry</th>
+                        <th>Biology</th>
+                        <th>Higher Math</th>
+                        <th>Total Marks</th>
+                        <th>Progress</th>
+                    </tr>
+                </thead>
+                <tbody id="leaderboard"></tbody>
+            </table>
+        </div>
+
+        <!-- Dynamic Analytics -->
+        <div class="analytics">
+            <h3>Dynamic Analytics</h3>
+            <div class="analytics-box">
+                <div>
+                    <p>Average Marks: <span id="averageMarks">Loading...</span></p>
+                    <div class="bar-container">
+                        <div class="bar" id="averageBar"></div>
+                    </div>
+                </div>
+                <div>
+                    <p>Highest Marks: <span id="highestMarks">Loading...</span> / 60</p>
+                    <div class="bar-container">
+                        <div class="bar" id="highestBar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allStudents = [
+        { name: "Taha Chy", roll: "A001",  bangla1: "Absent", bangla2: "N/A", english1: "N/A", english2: "N/A", bgs: 24, math: "N/A", physics: "N/A", chemistry: "N/A", biology: "N/A", higherMath: "N/A", total: 24 },
+        { name: "Mahdi", roll: "A002", bangla1: "Absent", bangla2: "N/A", english1: "N/A", english2: "N/A", bgs: 17, math: "N/A", physics: "N/A", chemistry: "N/A", biology: "N/A", higherMath: "N/A", total: 17 },
+        { name: "Naima", roll: "A003",  bangla1: 13, bangla2: "N/A", english1: "N/A", english2: "N/A", bgs: 10, math: "N/A", physics: "N/A", chemistry: "N/A", biology: "N/A", higherMath: "N/A", total: 23 },
+        ];
+
+        const leaderboard = document.getElementById('leaderboard');
+        const averageMarks = document.getElementById('averageMarks');
+        const averageBar = document.getElementById('averageBar');
+        const highestMarks = document.getElementById('highestMarks');
+        const highestBar = document.getElementById('highestBar');
+
+        function displayLeaderboard() {
+            leaderboard.innerHTML = '';
+            let totalMarks = 0;
+            let highest = 0;
+
+            allStudents.forEach((student, index) => {
+                const total = student.total;
+                totalMarks += total;
+                highest = total > highest ? total : highest;
+
+                leaderboard.innerHTML += `
+                    <tr class="leaderboard-row">
+                        <td>${index + 1}</td>
+                        <td>${student.name}</td>
+                        <td>${student.roll}</td>
+                        <td>${student.group}</td>
+                        <td>${student.bangla1}</td>
+                        <td>${student.bangla2}</td>
+                        <td>${student.english1}</td>
+                        <td>${student.english2}</td>
+                        <td>${student.bgs}</td>
+                        <td>${student.math}</td>
+                        <td>${student.physics}</td>
+                        <td>${student.chemistry}</td>
+                        <td>${student.biology}</td>
+                        <td>${student.higherMath}</td>
+                        <td>${total}</td>
+                        <td><button class="view-progress">View Progress</button></td>
+                    </tr>
+                `;
+            });
+
+            const average = totalMarks / allStudents.length;
+            averageMarks.innerHTML = average.toFixed(2);
+            highestMarks.innerHTML = highest;
+            averageBar.style.width = `${(average / 60) * 100}%`;
+            highestBar.style.width = `${(highest / 60) * 100}%`;
+        }
+
+        displayLeaderboard();
+    </script>
+</body>
+</html>
